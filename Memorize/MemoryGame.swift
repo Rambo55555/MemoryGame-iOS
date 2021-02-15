@@ -15,6 +15,6 @@ struct MemoryGame {
     }
     
     struct Card {
-        <#fields#>
+
     }
 }

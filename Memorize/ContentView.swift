@@ -8,18 +8,33 @@
 import SwiftUI
 
 struct ContentView: View {
-    var viewModel: EmojiMemoryGame
+    @ObservedObject var viewModel: EmojiMemoryGame
     var body: some View {
-        HStack {
-            ForEach(viewModel.cards) { card in
-                CardView(card: card).onTapGesture {
-                    //card.changeFace()
-                }
+        GridView(viewModel.cards) { card in
+            CardView(card: card)
+            .onTapGesture {
+                viewModel.choose(card: card)
             }
+            .padding(5)
         }
-        .foregroundColor(.blue)
-        .padding()
-        .font(Font.largeTitle)
+        
+ //       GridContentView()
+//        GridView(colorViews()) { color in
+//            color
+//        }
+    }
+    func colorViews() -> [Color] {
+        var contentView = [Color]()
+        for _ in 0..<16 {
+            contentView.append(Color.random)
+        }
+        return contentView
+    }
+}
+
+extension Color: Identifiable {
+    public var id: Int {
+        return self.hashValue
     }
 }
 
@@ -27,16 +42,28 @@ struct CardView: View {
     var card: MemoryGame<String>.Card
     
     var body: some View {
-        ZStack {
-            if card.isFaceUp {
-                RoundedRectangle(cornerRadius: 10.0).fill(Color.white)
-                RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/).stroke().foregroundColor(.orange)
-                Text(card.content)
-            } else {
-                RoundedRectangle(cornerRadius: 10.0).fill(Color.orange)
+        GeometryReader { geometry in
+            ZStack {
+                if card.isFaceUp {
+                    RoundedRectangle(cornerRadius: cornerRadius).fill(Color.white)
+                    RoundedRectangle(cornerRadius: cornerRadius).stroke(lineWidth: edgeLineWidth).foregroundColor(.orange)
+                    Text(card.content)
+                } else {
+                    RoundedRectangle(cornerRadius: cornerRadius).fill(Color.orange)
+                }
             }
-            
+            .font(Font.system(size: fontSize(for: geometry.size)))
         }
+        
+    }
+    
+    // MARK: - Drawing Constants
+    let cornerRadius: CGFloat = 10
+    let edgeLineWidth: CGFloat = 3
+    let fontScaleFactor: CGFloat = 0.75
+    
+    func fontSize(for size: CGSize) -> CGFloat {
+        return min(size.width, size.height) * fontScaleFactor
     }
 }
 

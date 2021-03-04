@@ -40,29 +40,29 @@ extension Color: Identifiable {
 
 struct CardView: View {
     var card: MemoryGame<String>.Card
-    
+    @ViewBuilder
     var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                if card.isFaceUp {
-                    RoundedRectangle(cornerRadius: cornerRadius).fill(Color.white)
-                    RoundedRectangle(cornerRadius: cornerRadius).stroke(lineWidth: edgeLineWidth).foregroundColor(.orange)
+            if card.isFaceUp || !card.isMatched {
+                ZStack {
+                    Pie(startAngle: Angle.degrees(-90), endAngle: Angle.degrees(20), clockwise: true)
+                        .fill(Color.orange).padding(circlePadding).opacity(circleOpacity)
                     Text(card.content)
-                } else {
-                    if !card.isMatched {
-                        RoundedRectangle(cornerRadius: cornerRadius).fill(Color.orange)
-                    }
+                        .font(Font.system(size: fontSize(for: geometry.size)))
                 }
+                //.modifier(Cardify(isFaceUp: card.isFaceUp))
+                .cardify(isFaceUp: card.isFaceUp)
             }
-            .font(Font.system(size: fontSize(for: geometry.size)))
+            
         }
         
     }
     
     // MARK: - Drawing Constants
-    private let cornerRadius: CGFloat = 10
-    private let edgeLineWidth: CGFloat = 3
-    private let fontScaleFactor: CGFloat = 0.75
+
+    private let fontScaleFactor: CGFloat = 0.7
+    private let circlePadding: CGFloat = 5
+    private let circleOpacity: Double = 0.4
     
     private func fontSize(for size: CGSize) -> CGFloat {
         return min(size.width, size.height) * fontScaleFactor
@@ -72,6 +72,7 @@ struct CardView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         let game = EmojiMemoryGame()
-        ContentView(viewModel: game)
+        game.choose(card: game.cards[2])
+        return ContentView(viewModel: game)
     }
 }

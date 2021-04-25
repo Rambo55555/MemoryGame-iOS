@@ -26,8 +26,11 @@ struct GridLayout {
         var smallestVariance: Double?
         let sizeAspectRatio = abs(Double(size.width/size.height))
         for rows in 1...itemCount {
+            //看是否多一行
             let columns = (itemCount / rows) + (itemCount % rows > 0 ? 1 : 0)
+            //如果能够容纳
             if (rows - 1) * columns < itemCount {
+                //算项的高宽比
                 let itemAspectRatio = sizeAspectRatio * (Double(rows)/Double(columns))
                 let variance = abs(itemAspectRatio - desiredAspectRatio)
                 if smallestVariance == nil || variance < smallestVariance! {

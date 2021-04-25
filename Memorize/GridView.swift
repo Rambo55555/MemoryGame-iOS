@@ -10,7 +10,7 @@ import SwiftUI
 struct GridView<Item, ItemView>: View where Item: Identifiable, ItemView: View{
     private var items: [Item]
     private var viewForItem: (Item) -> ItemView
-    
+    //@escaping,逃逸闭包
     init(_ item: [Item], viewForItem: @escaping (Item) -> ItemView) {
         self.items = item
         self.viewForItem = viewForItem
